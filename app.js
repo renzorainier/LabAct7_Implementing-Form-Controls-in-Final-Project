@@ -45,83 +45,430 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 };
 
 // Logic to be placed here
-    return (
-        <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100">
-            {/* Sidebar for large screens */}
-            <aside className="hidden lg:flex flex-col w-80 min-h-screen bg-white shadow-xl rounded-r-3xl">
-                <div className="p-6 bg-blue-600 rounded-br-3xl mb-6">
-                    <div className="text-xl font-bold text-white flex items-center gap-2">
-                        <AccountIcon />
-                        Admin Portal
-                    </div>
+return (
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100">
+        {/* Sidebar for large screens */}
+        <aside className="hidden lg:flex flex-col w-80 min-h-screen bg-white shadow-xl rounded-r-3xl">
+            <div className="p-6 bg-blue-600 rounded-br-3xl mb-6">
+                <div className="text-xl font-bold text-white flex items-center gap-2">
+                    <AccountIcon />
+                    Admin Portal
                 </div>
-                <nav className="flex-1 p-6 space-y-2">
-                    <a href="#" onClick={() => setCurrentView('students')} className={`sidebar-item flex items-center gap-3 p-3 rounded-lg transition-colors ${currentView === 'students' || currentView === 'profile' ? 'sidebar-item-active' : ''}`}>
-                        <PeopleIcon />
-                        <span>Student Management</span>
-                    </a>
-                    <a href="#" onClick={() => setCurrentView('financials')} className={`sidebar-item flex items-center gap-3 p-3 rounded-lg transition-colors ${currentView === 'financials' ? 'sidebar-item-active' : ''}`}>
-                        <MoneyIcon />
-                        <span>Financials</span>
-                    </a>
-                </nav>
-                <div className="p-6">
-                    <button onClick={() => setIsAuthenticated(false)} className="flex items-center gap-3 w-full p-3 hover:bg-gray-200 rounded-lg transition-colors text-red-600 font-medium">
-                        <LogoutIcon />
-                        <span>Log Out</span>
-                    </button>
-                </div>
-            </aside>
+            </div>
+            <nav className="flex-1 p-6 space-y-2">
+                <a href="#" onClick={() => setCurrentView('students')} className={`sidebar-item flex items-center gap-3 p-3 rounded-lg transition-colors ${currentView === 'students' || currentView === 'profile' ? 'sidebar-item-active' : ''}`}>
+                    <PeopleIcon />
+                    <span>Student Management</span>
+                </a>
+                <a href="#" onClick={() => setCurrentView('financials')} className={`sidebar-item flex items-center gap-3 p-3 rounded-lg transition-colors ${currentView === 'financials' ? 'sidebar-item-active' : ''}`}>
+                    <MoneyIcon />
+                    <span>Financials</span>
+                </a>
+            </nav>
+            <div className="p-6">
+                <button onClick={() => setIsAuthenticated(false)} className="flex items-center gap-3 w-full p-3 hover:bg-gray-200 rounded-lg transition-colors text-red-600 font-medium">
+                    <LogoutIcon />
+                    <span>Log Out</span>
+                </button>
+            </div>
+        </aside>
 
-            {/* Main content area */}
-            <main className="flex-1 flex flex-col">
-                {/* Mobile Navbar with toggle button */}
-                <header className="lg:hidden flex justify-between items-center p-4 bg-white shadow-md">
-                    <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-lg text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                    <span className="text-xl font-bold">Metroview Admin</span>
-                    <button onClick={() => setIsAuthenticated(false)} className="p-2 rounded-lg text-red-600">
-                        <LogoutIcon />
-                    </button>
-                </header>
+        {/* Main content area */}
+        <main className="flex-1 flex flex-col">
+            {/* Mobile Navbar with toggle button */}
+            <header className="lg:hidden flex justify-between items-center p-4 bg-white shadow-md">
+                <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-lg text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <span className="text-xl font-bold">Metroview Admin</span>
+                <button onClick={() => setIsAuthenticated(false)} className="p-2 rounded-lg text-red-600">
+                    <LogoutIcon />
+                </button>
+            </header>
 
-                {/* Mobile sidebar (Drawer) */}
-                <div className={`fixed inset-0 z-50 flex transform transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <aside className="w-80 bg-white shadow-xl flex flex-col">
-                        <div className="flex justify-between items-center p-6 bg-blue-600 text-white">
-                            <div className="text-xl font-bold flex items-center gap-2">
-                                <AccountIcon />
-                                Admin Portal
-                            </div>
-                            <button onClick={() => setIsSidebarOpen(false)} className="p-2">
-                                <TimesIcon />
-                            </button>
+            {/* Mobile sidebar (Drawer) */}
+            <div className={`fixed inset-0 z-50 flex transform transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <aside className="w-80 bg-white shadow-xl flex flex-col">
+                    <div className="flex justify-between items-center p-6 bg-blue-600 text-white">
+                        <div className="text-xl font-bold flex items-center gap-2">
+                            <AccountIcon />
+                            Admin Portal
                         </div>
-                        <nav className="flex-1 p-6 space-y-2">
-                            <a href="#" onClick={() => { setCurrentView('students'); setIsSidebarOpen(false); }} className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-200 ${currentView === 'students' || currentView === 'profile' ? 'bg-gray-200' : ''}`}>
-                                <PeopleIcon />
-                                <span>Student Management</span>
-                            </a>
-                            <a href="#" onClick={() => { setCurrentView('financials'); setIsSidebarOpen(false); }} className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-200 ${currentView === 'financials' ? 'bg-gray-200' : ''}`}>
-                                <MoneyIcon />
-                                <span>Financials</span>
-                            </a>
-                        </nav>
-                    </aside>
-                    <div className="flex-1 bg-black opacity-50" onClick={() => setIsSidebarOpen(false)}></div>
-                </div>
+                        <button onClick={() => setIsSidebarOpen(false)} className="p-2">
+                            <TimesIcon />
+                        </button>
+                    </div>
+                    <nav className="flex-1 p-6 space-y-2">
+                        <a href="#" onClick={() => { setCurrentView('students'); setIsSidebarOpen(false); }} className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-200 ${currentView === 'students' || currentView === 'profile' ? 'bg-gray-200' : ''}`}>
+                            <PeopleIcon />
+                            <span>Student Management</span>
+                        </a>
+                        <a href="#" onClick={() => { setCurrentView('financials'); setIsSidebarOpen(false); }} className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-200 ${currentView === 'financials' ? 'bg-gray-200' : ''}`}>
+                            <MoneyIcon />
+                            <span>Financials</span>
+                        </a>
+                    </nav>
+                </aside>
+                <div className="flex-1 bg-black opacity-50" onClick={() => setIsSidebarOpen(false)}></div>
+            </div>
 
-                <div className="flex-1 overflow-y-auto">
-                    {renderView()}
-                </div>
-            </main>
+            <div className="flex-1 overflow-y-auto">
+                {renderView()}
+            </div>
+        </main>
+    </div>
+);
+
+const ValidationError = ({ message }) => {
+    if (!message) return null;
+    return <p className="validation-error">{message}</p>;
+};
+
+const ToggleSwitch = ({ label, name, checked, onChange }) => {
+    return (
+        <div className="flex items-center justify-between">
+            <label htmlFor={name} className="form-label mb-0">{label}</label>
+            <label className="switch">
+                <input type="checkbox" id={name} name={name} checked={checked} onChange={onChange} />
+                <span className="slider"></span>
+            </label>
         </div>
+    )
+};
+
+// --- Form Validation Functions ---
+const validateStudentForm = (data, students = []) => {
+    const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const idRegex = /^S-\d{3}$/;
+    const phoneRegex = /^(09|\+639)\d{9}$/;
+    const today = new Date().toISOString().split('T')[0];
+
+    if (!data.name || data.name.length < 3) errors.name = "Full name is required (min 3 chars).";
+
+    if (!data.id) errors.id = "Student ID is required.";
+    else if (!idRegex.test(data.id)) errors.id = "Student ID must be in the format S-000.";
+    else if (students.some(s => s.id === data.id)) errors.id = "Student ID already exists.";
+
+    if (!data.email) errors.email = "Email is required.";
+    else if (!emailRegex.test(data.email)) errors.email = "Please enter a valid email address.";
+
+    if (!data.dob) errors.dob = "Date of Birth is required.";
+    else if (data.dob > today) errors.dob = "Date of Birth cannot be in the future.";
+
+    if (data.phone && !phoneRegex.test(data.phone)) errors.phone = "Must be a valid 11-digit (09...) or 12-digit (+639...) number.";
+
+    if (!data.grade) errors.grade = "Please select a grade level.";
+    if (!data.status) errors.status = "Please select a status.";
+    if (data.hasScholarship && !data.scholarshipDetails) errors.scholarshipDetails = "Please provide scholarship details.";
+
+    return errors;
+};
+
+const validatePaymentForm = (data, students = []) => {
+    const errors = {};
+    const today = new Date().toISOString().split('T')[0];
+
+    if (!data.studentId) errors.studentId = "Please select a student.";
+
+    if (!data.amount || data.amount <= 0) errors.amount = "Amount must be greater than 0.";
+    else if (data.studentId) {
+        const student = students.find(s => s.id === data.studentId);
+        if (student && data.amount > student.balance) {
+            errors.amount = `Amount cannot be more than the student's balance of ₱${student.balance.toLocaleString()}.`;
+        }
+    }
+
+    if (!data.date) errors.date = "Payment date is required.";
+    else if (data.date > today) errors.date = "Payment date cannot be in the future.";
+
+    if (data.type !== 'Cash' && !data.refNo) errors.refNo = "Reference No. is required for non-Cash payments.";
+    if (data.for.length === 0) errors.for = "Please select at least one payment item.";
+    if (data.for.includes('Other') && !data.notes) errors.notes = "Please specify details for 'Other' payment.";
+
+    return errors;
+};
+
+// --- MAJOR FORM 1: Add Student Form ---
+const AddStudentForm = ({ onAddStudent, onClose, students }) => {
+    const emptyStudent = {
+        id: '', name: '', grade: '', status: 'Pending', balance: 0, email: '', phone: '', guardian: '', dob: '', address: '', hasScholarship: false, scholarshipDetails: ''
+    };
+    const [formData, setFormData] = useState(emptyStudent);
+    const [errors, setErrors] = useState({});
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const validationErrors = validateStudentForm(formData, students); // Pass students list
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length === 0) {
+            console.log("Form is valid. Submitting new student:", formData);
+            onAddStudent(formData); // This updates the main App state
+            onClose();
+        } else {
+            console.log("Form has errors:", validationErrors);
+        }
+    };
+
+    const handleReset = () => {
+        setFormData(emptyStudent);
+        setErrors({});
+    };
+
+    return (
+        <form onSubmit={handleSubmit} noValidate>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 1. Student ID */}
+                <div>
+                    <label htmlFor="id" className="form-label">Student ID</label>
+                    <input type="text" id="id" name="id" value={formData.id} onChange={handleChange} className="form-input" placeholder="e.g., S-004" required />
+                    <ValidationError message={errors.id} />
+                </div>
+                {/* 2. Full Name */}
+                <div>
+                    <label htmlFor="name" className="form-label">Full Name</label>
+                    <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className="form-input" placeholder="e.g., Jane Smith" required />
+                    <ValidationError message={errors.name} />
+                </div>
+                {/* 3. Email */}
+                <div>
+                    <label htmlFor="email" className="form-label">Email</label>
+                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="form-input" placeholder="e.g., jane.s@example.com" required />
+                    <ValidationError message={errors.email} />
+                </div>
+                {/* 4. Date of Birth */}
+                <div>
+                    <label htmlFor="dob" className="form-label">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" value={formData.dob} onChange={handleChange} className="form-input" required />
+                    <ValidationError message={errors.dob} />
+                </div>
+                {/* 5. Grade Level (Dropdown) */}
+                <div>
+                    <label htmlFor="grade" className="form-label">Grade Level</label>
+                    <select id="grade" name="grade" value={formData.grade} onChange={handleChange} className="form-input" required>
+                        <option value="">-- Select Grade --</option>
+                        {GRADE_LEVELS.map(g => <option key={g} value={g}>{g}</option>)}
+                    </select>
+                    <ValidationError message={errors.grade} />
+                </div>
+                {/* 6. Phone */}
+                <div>
+                    <label htmlFor="phone" className="form-label">Phone</label>
+                    <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className="form-input" placeholder="e.g., 09187654321" />
+                    <ValidationError message={errors.phone} />
+                </div>
+                {/* 7. Guardian Name */}
+                <div>
+                    <label htmlFor="guardian" className="form-label">Guardian Name</label>
+                    <input type="text" id="guardian" name="guardian" value={formData.guardian} onChange={handleChange} className="form-input" placeholder="e.g., Robert Smith" />
+                </div>
+                {/* 8. Address (Textarea) */}
+                <div className="md:col-span-2">
+                    <label htmlFor="address" className="form-label">Address</label>
+                    <textarea id="address" name="address" value={formData.address} onChange={handleChange} className="form-input" rows="2" placeholder="123 Main St, Quezon City..."></textarea>
+                </div>
+                {/* 9. Status (Radio) */}
+                <div className="md:col-span-2">
+                    <label className="form-label">Student Status</label>
+                    <div className="flex gap-4 mt-2">
+                        {STUDENT_STATUSES.map(s => (
+                            <div key={s} className="flex items-center">
+                                <input type="radio" id={`status-${s}`} name="status" value={s} checked={formData.status === s} onChange={handleChange} className="w-4 h-4 text-blue-600" />
+                                <label htmlFor={`status-${s}`} className="ml-2 block text-sm text-gray-700">{s}</label>
+                            </div>
+                        ))}
+                    </div>
+                    <ValidationError message={errors.status} />
+                </div>
+                {/* 10. Scholarship (Checkbox) */}
+                <div className="md:col-span-2 flex items-center gap-3">
+                    <input type="checkbox" id="hasScholarship" name="hasScholarship" checked={formData.hasScholarship} onChange={handleChange} className="h-5 w-5 text-blue-600 rounded" />
+                    <label htmlFor="hasScholarship" className="form-label mb-0">Has Scholarship?</label>
+                </div>
+                {/* 11. Scholarship Details (Conditional Textarea) */}
+                {formData.hasScholarship && (
+                    <div className="md:col-span-2">
+                        <label htmlFor="scholarshipDetails" className="form-label">Scholarship Details</label>
+                        <textarea id="scholarshipDetails" name="scholarshipDetails" value={formData.scholarshipDetails} onChange={handleChange} className="form-input" rows="2" placeholder="e.g., Academic Full, 50% Grant..."></textarea>
+                        <ValidationError message={errors.scholarshipDetails} />
+                    </div>
+                )}
+            </div>
+            {/* Buttons */}
+            <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
+                <button type="button" onClick={handleReset} className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
+                    Reset
+                </button>
+                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-bold">
+                    Add Student
+                </button>
+            </div>
+        </form>
     );
 };
 
+// --- MAJOR FORM 2: Record Payment Form ---
+const RecordPaymentForm = ({ students, onAddPayment, onClose }) => {
+    const emptyPayment = {
+        studentId: '', date: '', amount: '', type: 'Cash', refNo: '', for: ['Tuition'], notes: '', receiptSent: true
+    };
+    const [formData, setFormData] = useState(emptyPayment);
+    const [errors, setErrors] = useState({});
+
+    const handleChange = (e) => {
+        const { name, value, type } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleCheckboxChange = (e) => {
+        const { value, checked } = e.target;
+        setFormData(prev => {
+            const newFor = [...prev.for];
+            if (checked) {
+                newFor.push(value);
+            } else {
+                const index = newFor.indexOf(value);
+                if (index > -1) newFor.splice(index, 1);
+            }
+            return { ...prev, for: newFor };
+        });
+    };
+
+    const handleToggle = (e) => {
+        const { name, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: checked
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const validationErrors = validatePaymentForm(formData, students); // Pass students
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length === 0) {
+            const student = students.find(s => s.id === formData.studentId);
+            const newPayment = {
+                ...formData,
+                id: `P-${String(Math.floor(Math.random() * 900) + 100)}`, // Random ID
+                studentName: student ? student.name : 'Unknown',
+                amount: parseFloat(formData.amount)
+            };
+            console.log("Form is valid. Submitting new payment:", newPayment);
+            onAddPayment(newPayment); // This updates the main App state
+            onClose();
+        } else {
+            console.log("Form has errors:", validationErrors);
+        }
+    };
+
+    const handleReset = () => {
+        setFormData(emptyPayment);
+        setErrors({});
+    };
+
+    return (
+        <form onSubmit={handleSubmit} noValidate>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 1. Student (Dropdown) */}
+                <div className="md:col-span-2">
+                    <label htmlFor="studentId" className="form-label">Student</label>
+                    <select id="studentId" name="studentId" value={formData.studentId} onChange={handleChange} className="form-input" required>
+                        <option value="">-- Select Student --</option>
+                        {students.map(s => <option key={s.id} value={s.id}>{s.name} ({s.id}) - Bal: ₱{s.balance}</option>)}
+                    </select>
+                    <ValidationError message={errors.studentId} />
+                </div>
+                {/* 2. Amount */}
+                <div>
+                    <label htmlFor="amount" className="form-label">Amount (PHP)</label>
+                    <input type="number" id="amount" name="amount" value={formData.amount} onChange={handleChange} className="form-input" placeholder="e.g., 5000" min="0" step="0.01" required />
+                    <ValidationError message={errors.amount} />
+                </div>
+                {/* 3. Payment Date */}
+                <div>
+                    <label htmlFor="date" className="form-label">Payment Date</label>
+                    <input type="date" id="date" name="date" value={formData.date} onChange={handleChange} className="form-input" required />
+                    <ValidationError message={errors.date} />
+                </div>
+                {/* 4. Payment Type (Radio) */}
+                <div className="md:col-span-2">
+                    <label className="form-label">Payment Type</label>
+                    <div className="flex flex-wrap gap-4 mt-2">
+                        {PAYMENT_TYPES.map(p => (
+                            <div key={p} className="flex items-center">
+                                <input type="radio" id={`type-${p}`} name="type" value={p} checked={formData.type === p} onChange={handleChange} className="w-4 h-4 text-blue-600" />
+                                <label htmlFor={`type-${p}`} className="ml-2 block text-sm text-gray-700">{p}</label>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                {/* 5. Reference No (Conditional) */}
+                {formData.type !== 'Cash' && (
+                    <div className="md:col-span-2">
+                        <label htmlFor="refNo" className="form-label">Reference No.</label>
+                        <input type="text" id="refNo" name="refNo" value={formData.refNo} onChange={handleChange} className="form-input" placeholder="e.g., CHK-12345 or Transaction ID" />
+                        <ValidationError message={errors.refNo} />
+                    </div>
+                )}
+                {/* 6. Payment For (Checkboxes) */}
+                <div className="md:col-span-2">
+                    <label className="form-label">Payment For</label>
+                    <div className="flex flex-wrap gap-4 mt-2">
+                        {PAYMENT_FOR_OPTIONS.map(p => (
+                            <div key={p} className="flex items-center">
+                                <input type="checkbox" id={`for-${p}`} name="for" value={p} checked={formData.for.includes(p)} onChange={handleCheckboxChange} className="w-4 h-4 text-blue-600 rounded" />
+                                <label htmlFor={`for-${p}`} className="ml-2 block text-sm text-gray-700">{p}</label>
+                            </div>
+                        ))}
+                    </div>
+                    <ValidationError message={errors.for} />
+                </div>
+                {/* 7. Notes (Textarea) */}
+                <div className="md:col-span-2">
+                    <label htmlFor="notes" className="form-label">Notes / Details</label>
+                    <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} className="form-input" rows="2" placeholder="e.g., For 'Other': Janitorial Fee"></textarea>
+                    <ValidationError message={errors.notes} />
+                </div>
+                {/* 8. Send Receipt (Toggle) */}
+                <div className="md:col-span-2">
+                    <ToggleSwitch
+                        label="Send Email Receipt to Guardian"
+                        name="receiptSent"
+                        checked={formData.receiptSent}
+                        onChange={handleToggle}
+                    />
+                </div>
+                {/* 9. Hidden Field (Not shown, but counts) */}
+                <input type="hidden" name="form_source" value="financials_modal" />
+            </div>
+            {/* 10. Buttons */}
+            <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
+                <button type="button" onClick={handleReset} className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
+                    Reset
+                </button>
+                <button type="submit" className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-bold">
+                    Record Payment
+                </button>
+            </div>
+        </form>
+    );
+};
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
 root.render(<App />);
