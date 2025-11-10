@@ -44,7 +44,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     );
 };
 
-// Logic to be placed here 
+// Logic to be placed here
     return (
         <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100">
             {/* Sidebar for large screens */}
