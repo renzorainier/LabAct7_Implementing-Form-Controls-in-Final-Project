@@ -44,83 +44,6 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     );
 };
 
-// Logic to be placed here
-return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100">
-        {/* Sidebar for large screens */}
-        <aside className="hidden lg:flex flex-col w-80 min-h-screen bg-white shadow-xl rounded-r-3xl">
-            <div className="p-6 bg-blue-600 rounded-br-3xl mb-6">
-                <div className="text-xl font-bold text-white flex items-center gap-2">
-                    <AccountIcon />
-                    Admin Portal
-                </div>
-            </div>
-            <nav className="flex-1 p-6 space-y-2">
-                <a href="#" onClick={() => setCurrentView('students')} className={`sidebar-item flex items-center gap-3 p-3 rounded-lg transition-colors ${currentView === 'students' || currentView === 'profile' ? 'sidebar-item-active' : ''}`}>
-                    <PeopleIcon />
-                    <span>Student Management</span>
-                </a>
-                <a href="#" onClick={() => setCurrentView('financials')} className={`sidebar-item flex items-center gap-3 p-3 rounded-lg transition-colors ${currentView === 'financials' ? 'sidebar-item-active' : ''}`}>
-                    <MoneyIcon />
-                    <span>Financials</span>
-                </a>
-            </nav>
-            <div className="p-6">
-                <button onClick={() => setIsAuthenticated(false)} className="flex items-center gap-3 w-full p-3 hover:bg-gray-200 rounded-lg transition-colors text-red-600 font-medium">
-                    <LogoutIcon />
-                    <span>Log Out</span>
-                </button>
-            </div>
-        </aside>
-
-        {/* Main content area */}
-        <main className="flex-1 flex flex-col">
-            {/* Mobile Navbar with toggle button */}
-            <header className="lg:hidden flex justify-between items-center p-4 bg-white shadow-md">
-                <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-lg text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-                <span className="text-xl font-bold">Metroview Admin</span>
-                <button onClick={() => setIsAuthenticated(false)} className="p-2 rounded-lg text-red-600">
-                    <LogoutIcon />
-                </button>
-            </header>
-
-            {/* Mobile sidebar (Drawer) */}
-            <div className={`fixed inset-0 z-50 flex transform transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <aside className="w-80 bg-white shadow-xl flex flex-col">
-                    <div className="flex justify-between items-center p-6 bg-blue-600 text-white">
-                        <div className="text-xl font-bold flex items-center gap-2">
-                            <AccountIcon />
-                            Admin Portal
-                        </div>
-                        <button onClick={() => setIsSidebarOpen(false)} className="p-2">
-                            <TimesIcon />
-                        </button>
-                    </div>
-                    <nav className="flex-1 p-6 space-y-2">
-                        <a href="#" onClick={() => { setCurrentView('students'); setIsSidebarOpen(false); }} className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-200 ${currentView === 'students' || currentView === 'profile' ? 'bg-gray-200' : ''}`}>
-                            <PeopleIcon />
-                            <span>Student Management</span>
-                        </a>
-                        <a href="#" onClick={() => { setCurrentView('financials'); setIsSidebarOpen(false); }} className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-200 ${currentView === 'financials' ? 'bg-gray-200' : ''}`}>
-                            <MoneyIcon />
-                            <span>Financials</span>
-                        </a>
-                    </nav>
-                </aside>
-                <div className="flex-1 bg-black opacity-50" onClick={() => setIsSidebarOpen(false)}></div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto">
-                {renderView()}
-            </div>
-        </main>
-    </div>
-);
-
 const ValidationError = ({ message }) => {
     if (!message) return null;
     return <p className="validation-error">{message}</p>;
@@ -469,6 +392,439 @@ const RecordPaymentForm = ({ students, onAddPayment, onClose }) => {
         </form>
     );
 };
+
+
+// --- Views and Components ---
+const StudentManagementView = ({ students, setStudents, setCurrentView, setSelectedStudent, onAddStudent }) => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
+
+    const filteredStudents = students.filter(student =>
+        student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.id.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return (
+        <div className="flex flex-col gap-6 p-8">
+            <div className="flex flex-row justify-between items-center mb-4">
+                <h2 className="text-3xl font-bold text-gray-800">Student Management</h2>
+                <button onClick={() => setIsAddStudentModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                    <PlusIcon />
+                    Add New Student
+                </button>
+            </div>
+
+            {/* --- SUPPORTING FORM 2: Search Bar --- */}
+            <form className="w-full" onSubmit={(e) => e.preventDefault()}>
+                <label htmlFor="search" className="form-label sr-only">Search Students</label>
+                <input
+                    type="search"
+                    id="search"
+                    name="search"
+                    placeholder="Search students by name or ID... (e.g., Jane or S-002)"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="form-input"
+                />
+                {/* This form meets the "functionality" requirement by filtering the list below in real-time */}
+            </form>
+
+            <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
+                <table className="min-w-full table-auto text-left">
+                    <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <tr>
+                            <th className="py-3 px-6 text-left">ID</th>
+                            <th className="py-3 px-6 text-left">Name</th>
+                            <th className="py-3 px-6 text-left">Grade</th>
+                            <th className="py-3 px-6 text-left">Status</th>
+                            <th className="py-3 px-6 text-left">Balance Due</th>
+                        </tr>
+                    </thead>
+                    <tbody className="text-gray-600 text-sm font-light">
+                        {filteredStudents.map(student => (
+                            <tr key={student.id} className="border-b border-gray-200 hover:bg-gray-50 transition cursor-pointer" onClick={() => {
+                                setSelectedStudent(student);
+                                setCurrentView('profile');
+                            }}>
+                                <td className="py-3 px-6 whitespace-nowrap font-medium text-gray-700">{student.id}</td>
+                                <td className="py-3 px-6 font-bold text-gray-800">{student.name}</td>
+                                <td className="py-3 px-6">{student.grade}</td>
+                                <td className="py-3 px-6">
+                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                        student.status === 'Enrolled' ? 'bg-green-200 text-green-600'
+                                        : (student.status === 'Pending' ? 'bg-yellow-200 text-yellow-600' : 'bg-red-200 text-red-600')
+                                    }`}>
+                                        {student.status}
+                                    </span>
+                                </td>
+                                <td className="py-3 px-6 text-red-500 font-semibold">₱{student.balance.toLocaleString()}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <Modal isOpen={isAddStudentModalOpen} onClose={() => setIsAddStudentModalOpen(false)} title="Add New Student (Major Form 1)">
+                {/* --- MAJOR FORM 1 --- */}
+                <AddStudentForm
+                    onAddStudent={onAddStudent}
+                    onClose={() => setIsAddStudentModalOpen(false)}
+                    students={students}
+                />
+            </Modal>
+        </div>
+    );
+};
+
+const FinancialsView = ({ students, payments, onAddPayment }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    return (
+        <div className="flex flex-col gap-6 p-8">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-3xl font-bold text-gray-800">Financial Management</h2>
+                <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
+                    <PlusIcon />
+                    Record New Payment
+                </button>
+            </div>
+            <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
+                <table className="min-w-full table-auto text-left">
+                    <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <tr>
+                            <th className="py-3 px-6 text-left">Student Name</th>
+                            <th className="py-3 px-6 text-left">Date</th>
+                            <th className="py-3 px-6 text-left">Amount Paid</th>
+                            <th className="py-3 px-6 text-left">Type</th>
+                            <th className="py-3 px-6 text-left">Ref No.</th>
+                        </tr>
+                    </thead>
+                    <tbody className="text-gray-600 text-sm font-light">
+                        {payments.map(payment => (
+                            <tr key={payment.id} className="border-b border-gray-200 hover:bg-gray-50 transition">
+                                <td className="py-3 px-6 whitespace-nowrap font-medium text-gray-700">{payment.studentName}</td>
+                                <td className="py-3 px-6">{payment.date}</td>
+                                <td className="py-3 px-6 text-green-600 font-semibold">₱{payment.amount.toLocaleString()}</td>
+                                <td className="py-3 px-6">{payment.type}</td>
+                                <td className="py-3 px-6">{payment.refNo || 'N/A'}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Record New Payment (Major Form 2)">
+                {/* --- MAJOR FORM 2 --- */}
+                <RecordPaymentForm
+                    students={students}
+                    onAddPayment={onAddPayment}
+                    onClose={() => setIsModalOpen(false)}
+                />
+            </Modal>
+        </div>
+    );
+};
+
+const StudentProfileView = ({ student, setCurrentView }) => {
+    if (!student) return <div className="p-8 text-center text-gray-500">Student not found.</div>;
+
+    const studentPayments = initialPayments.filter(p => p.studentId === student.id);
+
+    return (
+        <div className="flex flex-col gap-6 p-8">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-3xl font-bold text-gray-800">Student Profile</h2>
+                <button onClick={() => setCurrentView('students')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-blue-600 transition font-medium">
+                    <BackArrowIcon />
+                    Back to List
+                </button>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-lg p-6">
+                <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
+                    <h3 className="text-xl font-bold text-gray-800">{student.name}</h3>
+                    <button className="flex items-center gap-2 px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                        <EditIcon /> Edit
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-8 text-gray-700">
+                    <div><p className="font-semibold text-gray-500 text-sm">Student ID</p><p className="font-medium text-lg">{student.id}</p></div>
+                    <div><p className="font-semibold text-gray-500 text-sm">Grade Level</p><p className="font-medium text-lg">{student.grade}</p></div>
+                    <div><p className="font-semibold text-gray-500 text-sm">Status</p>
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            student.status === 'Enrolled' ? 'bg-green-200 text-green-600'
+                            : (student.status === 'Pending' ? 'bg-yellow-200 text-yellow-600' : 'bg-red-200 text-red-600')
+                        }`}>
+                            {student.status}
+                        </span>
+                    </div>
+                    <div><p className="font-semibold text-gray-500 text-sm">Outstanding Balance</p><p className="font-medium text-lg text-red-500">₱{student.balance.toLocaleString()}</p></div>
+                    <div><p className="font-semibold text-gray-500 text-sm">Email</p><p className="font-medium text-lg">{student.email}</p></div>
+                    <div><p className="font-semibold text-gray-500 text-sm">Phone</p><p className="font-medium text-lg">{student.phone}</p></div>
+                    <div><p className="font-semibold text-gray-500 text-sm">Guardian</p><p className="font-medium text-lg">{student.guardian}</p></div>
+                    <div><p className="font-semibold text-gray-500 text-sm">Date of Birth</p><p className="font-medium text-lg">{student.dob}</p></div>
+                    <div className="lg:col-span-2"><p className="font-semibold text-gray-500 text-sm">Address</p><p className="font-medium text-lg">{student.address}</p></div>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-lg p-6 mt-4">
+                <h3 className="text-xl font-bold mb-4 text-gray-800">Payment History</h3>
+                {studentPayments.length > 0 ? (
+                    <table className="min-w-full table-auto text-left">
+                        <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                            <tr>
+                                <th className="py-3 px-6 text-left">Date</th>
+                                <th className="py-3 px-6 text-left">Amount</th>
+                                <th className="py-3 px-6 text-left">Type</th>
+                            </tr>
+                        </thead>
+                        <tbody className="text-gray-600 text-sm font-light">
+                            {studentPayments.map(payment => (
+                                <tr key={payment.id} className="border-b border-gray-200">
+                                    <td className="py-3 px-6">{payment.date}</td>
+                                    <td className="py-3 px-6 text-green-600 font-semibold">₱{payment.amount.toLocaleString()}</td>
+                                    <td className="py-3 px-6">{payment.type}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p className="text-gray-500 text-sm">No payment history found for this student.</p>
+                )}
+            </div>
+        </div>
+    );
+};
+
+// --- SUPPORTING FORM 1: Login Form ---
+const LoginView = ({ onLogin }) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        setError(''); // Clear previous errors
+
+        // --- NEW VALIDATION: Input Length ---
+        if (!username || !password) {
+            setError('Username and Password are required.');
+            return;
+        }
+
+        // --- NEW VALIDATION: Input Length ---
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters.');
+            return;
+        }
+
+        // Authentication Logic
+        if (username === 'admin' && password === 'password') {
+            onLogin(true);
+        } else {
+            setError('Invalid credentials. Please try again.');
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+            <div className="w-full max-w-sm bg-white rounded-xl shadow-2xl p-8">
+                <h2 className="text-3xl font-bold text-center mb-2 text-gray-800">Metroview Baptist Academy</h2>
+                <p className="text-center text-sm text-gray-500 mb-6">
+                    Enrollment & Student Information System
+                </p>
+
+                {/* The <form> tag starts here */}
+                <form onSubmit={handleLogin} className="flex flex-col gap-4" noValidate>
+                    {/* 1. Username (Textbox) */}
+                    <div>
+                        <label htmlFor="username" className="form-label">Username</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="form-input"
+                            required
+                        />
+                    </div>
+                    {/* 2. Password (Password) */}
+                    <div>
+                        <label htmlFor="password"className="form-label">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="form-input"
+                            required
+                        />
+                    </div>
+
+                    {/* Error message shown on validation fail */}
+                    <ValidationError message={error} />
+
+                    {/* 3. Submit Button */}
+                    <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md mt-2">Login</button>
+                </form>
+                {/* The <form> tag ends here */}
+
+                <p className="text-center text-xs mt-6 text-gray-400">
+                    Use username: <span className="font-semibold text-gray-500">`admin`</span> and password: <span className="font-semibold text-gray-500">`password`</span> to login.
+                </p>
+            </div>
+        </div>
+    );
+};
+
+// --- Main App Component ---
+const App = () => {
+    // Set initial view to 'students' instead of 'dashboard'
+    const [currentView, setCurrentView] = useState('students');
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    // --- Lifted State ---
+    const [students, setStudents] = useState(initialStudents);
+    const [payments, setPayments] = useState(initialPayments);
+    // --- ---
+
+    const handleAddStudent = (newStudent) => {
+        setStudents(prev => [...prev, { ...newStudent, balance: 7500 } ]); // Add default balance
+    };
+
+    const handleAddPayment = (newPayment) => {
+        setPayments(prev => [newPayment, ...prev]);
+        // Update student balance
+        setStudents(prevStudents =>
+            prevStudents.map(s =>
+                s.id === newPayment.studentId
+                ? { ...s, balance: s.balance - newPayment.amount }
+                : s
+            )
+        );
+    };
+
+    const renderView = () => {
+        switch (currentView) {
+            case 'students':
+                return <StudentManagementView
+                            students={students}
+                            setStudents={setStudents}
+                            setCurrentView={setCurrentView}
+                            setSelectedStudent={setSelectedStudent}
+                            onAddStudent={handleAddStudent}
+                        />;
+            case 'financials':
+                return <FinancialsView
+                            students={students}
+                            payments={payments}
+                            onAddPayment={handleAddPayment}
+                        />;
+            case 'profile':
+                return <StudentProfileView
+                            student={selectedStudent}
+                            setCurrentView={setCurrentView}
+                        />;
+            default:
+                // Default to 'students' page
+                return <StudentManagementView
+                            students={students}
+                            setStudents={setStudents}
+                            setCurrentView={setCurrentView}
+                            setSelectedStudent={setSelectedStudent}
+                            onAddStudent={handleAddStudent}
+                        />;
+        }
+    };
+
+    if (!isAuthenticated) {
+        // This renders Supporting Form 1
+        return <LoginView onLogin={setIsAuthenticated} />;
+    }
+
+    return (
+        <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100">
+            {/* Sidebar for large screens */}
+            <aside className="hidden lg:flex flex-col w-80 min-h-screen bg-white shadow-xl rounded-r-3xl">
+                <div className="p-6 bg-blue-600 rounded-br-3xl mb-6">
+                    <div className="text-xl font-bold text-white flex items-center gap-2">
+                        <AccountIcon />
+                        Admin Portal
+                    </div>
+                </div>
+                <nav className="flex-1 p-6 space-y-2">
+                    <a href="#" onClick={() => setCurrentView('students')} className={`sidebar-item flex items-center gap-3 p-3 rounded-lg transition-colors ${currentView === 'students' || currentView === 'profile' ? 'sidebar-item-active' : ''}`}>
+                        <PeopleIcon />
+                        <span>Student Management</span>
+                    </a>
+                    <a href="#" onClick={() => setCurrentView('financials')} className={`sidebar-item flex items-center gap-3 p-3 rounded-lg transition-colors ${currentView === 'financials' ? 'sidebar-item-active' : ''}`}>
+                        <MoneyIcon />
+                        <span>Financials</span>
+                    </a>
+                </nav>
+                <div className="p-6">
+                    <button onClick={() => setIsAuthenticated(false)} className="flex items-center gap-3 w-full p-3 hover:bg-gray-200 rounded-lg transition-colors text-red-600 font-medium">
+                        <LogoutIcon />
+                        <span>Log Out</span>
+                    </button>
+                </div>
+            </aside>
+
+            {/* Main content area */}
+            <main className="flex-1 flex flex-col">
+                {/* Mobile Navbar with toggle button */}
+                <header className="lg:hidden flex justify-between items-center p-4 bg-white shadow-md">
+                    <button onClick={() => setIsSidebarOpen(true)} className="p-2 rounded-lg text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <span className="text-xl font-bold">Metroview Admin</span>
+                    <button onClick={() => setIsAuthenticated(false)} className="p-2 rounded-lg text-red-600">
+                        <LogoutIcon />
+                    </button>
+                </header>
+
+                {/* Mobile sidebar (Drawer) */}
+                <div className={`fixed inset-0 z-50 flex transform transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    <aside className="w-80 bg-white shadow-xl flex flex-col">
+                        <div className="flex justify-between items-center p-6 bg-blue-600 text-white">
+                            <div className="text-xl font-bold flex items-center gap-2">
+                                <AccountIcon />
+                                Admin Portal
+                            </div>
+                            <button onClick={() => setIsSidebarOpen(false)} className="p-2">
+                                <TimesIcon />
+                            </button>
+                        </div>
+                        <nav className="flex-1 p-6 space-y-2">
+                            <a href="#" onClick={() => { setCurrentView('students'); setIsSidebarOpen(false); }} className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-200 ${currentView === 'students' || currentView === 'profile' ? 'bg-gray-200' : ''}`}>
+                                <PeopleIcon />
+                                <span>Student Management</span>
+                            </a>
+                            <a href="#" onClick={() => { setCurrentView('financials'); setIsSidebarOpen(false); }} className={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-gray-200 ${currentView === 'financials' ? 'bg-gray-200' : ''}`}>
+                                <MoneyIcon />
+                                <span>Financials</span>
+                            </a>
+                        </nav>
+                    </aside>
+                    <div className="flex-1 bg-black opacity-50" onClick={() => setIsSidebarOpen(false)}></div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto">
+                    {renderView()}
+                </div>
+            </main>
+        </div>
+    );
+};
+
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
 root.render(<App />);
